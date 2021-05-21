@@ -23,8 +23,35 @@ app.get("/", function (req, res) {
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
+ 
+app.get("/api", function (req, res) {
+  const currDate = new Date();
+  res.json({
+    "unix": currDate.getTime(),
+    "utc" : currDate.toUTCString()
+  })
+})
 
+function convertDate(date) {
+  if (isNaN(date)) {
+    return new Date(date);
+  } else {
+    return new Date(parseInt(date));
+  }
+}
 
+// solution to /api/:date?
+app.get("/api/:date", function (req, res) {
+  const dateRes = convertDate(req.params.date);
+  if (dateRes.toString() === "Invalid Date") {
+    res.json({error : "Invalid Date"});
+  } else {
+    res.json({
+      unix: dateRes.getTime(),
+      utc: dateRes.toUTCString()
+    });
+  }
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function () {
